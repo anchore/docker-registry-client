@@ -110,6 +110,9 @@ class OAuth2TokenHandler(GenericTokenHandler):
         self._tokens = {}
 
     def _add_token(self, path, url, params, raw_token):
+        if 'token' not in raw_token and 'access_token' in raw_token:
+            raw_token['token'] = raw_token['access_token']
+
         now = datetime.datetime.utcnow()
         expiration = now + datetime.timedelta(seconds=int(raw_token.get('expires_in', 300)))
         self._tokens[path] = {'urls': [url], 'params': params, 'raw_token': raw_token, 'timestamp': now, 'expiration': expiration}
